@@ -13,26 +13,27 @@ int main(){
     float near = 0.1;
     float far = 100;
     float fov = 0.1;
+    float fps = 30;
     // Object3D Cube = {std::vector<Point3D> {Point3D{0,0,0},Point3D{1,0,0},Point3D{1,1,0},Point3D{0,1,0},Point3D{0,0,1},Point3D{1,0,1},Point3D{1,1,1},Point3D{0,1,1}},{},{}};
-    Object3D Teapot = loadObj("cube.obj");
+    Object3D Teapot = loadObj("teapot.obj");
     Object3D Cube = loadObj("cube.obj");
-    std::vector<Object3D> objects = {Teapot, Cube};
+    std::vector<Object3D> objects = {Teapot};
     SDL_Window* window = SDL_CreateWindow("3D Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Init(SDL_INIT_VIDEO);
 
     Point3D camPos = {0,0,0};
 
-    Render3D R1((SCREEN_WIDTH), (SCREEN_HEIGHT), near, far, fov, camPos, objects);
+    Render3D R1(fps, (SCREEN_WIDTH), (SCREEN_HEIGHT), near, far, fov, camPos, objects);
     std::vector<float> tr = {0,-2,-2,0};
     std::vector<float> tr1 = {0.0,0.01,0.01,0};
     std::vector<float> tr2 = {0,-1,-6,0};
-    std::vector<float> tr3 = {0,-1,-4,0};
+    std::vector<float> tr3 = {0,1,-8,0};
 
     Point3D neworig = {0,-1,-6};
-    Point3D neworige = {0,-1,0};
+    Point3D neworige = {0,-1,-8};
     R1.Translate(0, tr2);
-    R1.Translate(1, tr3);
+    //R1.Translate(1, tr3);
     //R1.Translate(1, tr3);
     // for (int i = 0; i < 30; i++){
     //     R1.Translate(0,tr1);
@@ -42,7 +43,7 @@ int main(){
         SDL_Event event;
         //SDL_Delay(100);
         R1.RotateY(0, 0.01, neworig);
-        R1.RotateX(1, 0.01, neworig);
+        //R1.RotateZ(1, 0.1, neworige);
 
         //R1.Translate(-1,tr1);
         

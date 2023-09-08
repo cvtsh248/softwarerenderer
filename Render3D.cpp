@@ -14,40 +14,57 @@ Object3D loadObj(std::string filename){
             std::stringstream ss(buffer);
             std::string s;
             int i = 0;
+            int letter_slash = buffer.find('/');
             if (buffer[0] == *"v" && buffer[1] != *"t" && buffer[1] != *"n"){ // Appending vertices
                 std::vector<float> pointBuffer;
                 while (std::getline(ss, s, ' ')) {
                     if (i > 0){
                         pointBuffer.push_back(std::stof(s));
                     }
-                    i += 1;
+                    i++;
                 }
                 Out.vertices.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
             }
-            else if (buffer[0] == *"f" && !buffer.find('f')){ // Appending faces
+            else if (buffer[0] == *"f" && buffer[letter_slash] != '/'){ // Appending faces
                 std::vector<float> pointBuffer;
                 while (std::getline(ss, s, ' ')) {
                     if (i > 0){
                         pointBuffer.push_back(std::stoi(s));
                     }
-                    i += 1;
+                    i++;
                 }
                 Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
             }
-            else if (buffer[0] == *"f" && buffer.find('f')){
+            // else if (buffer[0] == *"f" && buffer[letter_slash] == '/'){
+            //     std::vector<float> pointBuffer;
+            //     while (std::getline(ss, s, '/')) {
+            //         if (i == 1){
+            //             //pointBuffer.push_back(std::stof(s));
+            //             pointBuffer = {};
+            //             std::stringstream ss_(s);
+            //             std::string s_;
+            //         }
+            //         i++;
+            //     }
+            //     Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
+            // }
+            else if (buffer[0] == *"f" && buffer[letter_slash] == '/'){
                 std::vector<float> pointBuffer;
                 while (std::getline(ss, s, ' ')) {
-                    if (i == 2){
+                    if (i > 0){
                         //pointBuffer.push_back(std::stof(s));
-                        pointBuffer = {};
                         std::stringstream ss_(s);
                         std::string s_;
+                        int n = 0;
                         while (std::getline(ss_, s_, '/')){
-                            pointBuffer.push_back(std::stoi(s_));
+                            if (n == 0){
+                                pointBuffer.push_back(std::stoi(s_));
+                            }
+                            n++;
                             //std::printf("%d\n", std::stoi(s_));
                         }
                     }
-                    i += 1;
+                    i++;
                 }
                 Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
             }
@@ -68,10 +85,12 @@ Object3D loadObj(std::string filename){
 
 }
 
-Render3D::Render3D(float &width, float &height, float &near, float &far, float &fov, Point3D &cpos, std::vector<Object3D> &obj){
+Render3D::Render3D(float &fps, float &width, float &height, float &near, float &far, float &fov, Point3D &cpos, std::vector<Object3D> &obj){
     //objects[0].vertices;
     imgw = width;
     imgh = height;
+
+    FPS = fps;
 
     cameraPos = cpos;
 

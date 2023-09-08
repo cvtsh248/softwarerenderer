@@ -24,4 +24,8 @@ std::vector<float> Multiply(struct Matrix_44 &transform, std::vector<float> &coo
 
 std::vector<float> P3DTo4DVec(struct Point3D &a);
 
+std::vector<float> Cross(std::vector<float> &a, std::vector<float> &b);
+
+float Dot(std::vector<float> &a, std::vector<float> &b);
+
 #endif
