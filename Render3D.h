@@ -26,6 +26,7 @@ class Render3D{
         std::vector<Object3D> objects;
 
         Point3D cameraPos;
+        float FPS = 60;
         float fov; 
         float aspectRatio;
         float top;

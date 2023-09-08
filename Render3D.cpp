@@ -92,7 +92,6 @@ Render3D::Render3D(float &width, float &height, float &near, float &far, float &
 
 void Render3D::RenderVert(SDL_Window *window, SDL_Renderer *renderer){
     //std::printf("egg");
-
     std::vector<float> buffer;
     std::vector<float> projected;
     int px, py;
@@ -120,13 +119,14 @@ void Render3D::RenderVert(SDL_Window *window, SDL_Renderer *renderer){
         }
 
     }
-    SDL_RenderPresent(renderer);  
+    
+    SDL_RenderPresent(renderer); 
 
 }
 
 void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
 
-    
+    int tick = SDL_GetTicks();
     std::vector<std::vector<float>> projected;
     std::vector<std::vector<int>> pxy;
     std::vector<Point3D> buffer;
@@ -168,7 +168,11 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
         }
 
     }
-    SDL_RenderPresent(renderer);  
+
+    while (SDL_GetTicks() < tick + (1/FPS)*1000){
+        //wait
+    }
+    SDL_RenderPresent(renderer); 
 }
 
 void Render3D::RotateX(int id, float rad, Point3D &origin){
