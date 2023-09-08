@@ -68,10 +68,12 @@ Object3D loadObj(std::string filename){
 
 }
 
-Render3D::Render3D(float &width, float &height, float &near, float &far, float &fov, std::vector<Object3D> &obj){
+Render3D::Render3D(float &width, float &height, float &near, float &far, float &fov, Point3D &cpos, std::vector<Object3D> &obj){
     //objects[0].vertices;
     imgw = width;
     imgh = height;
+
+    cameraPos = cpos;
 
     aspectRatio = width/height;
     top = std::tan(fov/2);
@@ -145,7 +147,12 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
             buffer = {objects[i].tri_v[j], objects[i].tri_v[j+1],objects[i].tri_v[j+2]};
             for (int n = 0; n < 3; n++){
                 buffer_ = P3DTo4DVec(buffer[n]);
-                projected[n] = Multiply(projection, buffer_);
+                translation = {{1,0,0,-cameraPos.x},
+                            {0,1,0,-cameraPos.y},
+                            {0,0,1,-cameraPos.z},
+                            {0,0,0,1}};
+                projected[n] = Multiply(translation, buffer_);
+                projected[n] = Multiply(projection, projected[n]);
                 if (projected[n][3] != 0 && projected[n][3] != 1){
                     pxy[n][0] = std::round(((projected[n][0]/projected[n][3] + 1)*0.5*imgw));
                     pxy[n][1] = std::round(((1-(projected[n][1]/projected[n][3] + 1)*0.5)*imgh)); 
@@ -183,22 +190,32 @@ void Render3D::RotateX(int id, float rad, Point3D &origin){
                                {0,0,1,-origin.z},
                                {0,0,0,1}};
 
-    for (int i = 0; i < objects[id].vertices.size(); i++){
-        buffer = P3DTo4DVec(objects[id].vertices[i]);
-        buffer = Multiply(n_translation, buffer);
-        buffer = Multiply(rotation, buffer);
-        buffer = Multiply(translation, buffer);
-        buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].vertices[i] = buf;
-    }
+    if (id > -1){
+        for (int i = 0; i < objects[id].vertices.size(); i++){
+            buffer = P3DTo4DVec(objects[id].vertices[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].vertices[i] = buf;
+        }
 
-    for (int i = 0; i < objects[id].tri_v.size(); i++){
-        buffer = P3DTo4DVec(objects[id].tri_v[i]);
+
+        for (int i = 0; i < objects[id].tri_v.size(); i++){
+            buffer = P3DTo4DVec(objects[id].tri_v[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].tri_v[i] = buf;
+        }
+    } else if (id < 0){
+        buffer = P3DTo4DVec(cameraPos);
         buffer = Multiply(n_translation, buffer);
         buffer = Multiply(rotation, buffer);
         buffer = Multiply(translation, buffer);
         buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].tri_v[i] = buf;
+        cameraPos = buf;
     }
 
 }
@@ -221,23 +238,32 @@ void Render3D::RotateY(int id, float rad, Point3D &origin){
                                {0,0,1,-origin.z},
                                {0,0,0,1}};
 
-    for (int i = 0; i < objects[id].vertices.size(); i++){
-        buffer = P3DTo4DVec(objects[id].vertices[i]);
+    if (id > -1){
+        for (int i = 0; i < objects[id].vertices.size(); i++){
+            buffer = P3DTo4DVec(objects[id].vertices[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].vertices[i] = buf;
+        }
+
+
+        for (int i = 0; i < objects[id].tri_v.size(); i++){
+            buffer = P3DTo4DVec(objects[id].tri_v[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].tri_v[i] = buf;
+        }
+    } else if (id < 0){
+        buffer = P3DTo4DVec(cameraPos);
         buffer = Multiply(n_translation, buffer);
         buffer = Multiply(rotation, buffer);
         buffer = Multiply(translation, buffer);
         buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].vertices[i] = buf;
-    }
-
-
-    for (int i = 0; i < objects[id].tri_v.size(); i++){
-        buffer = P3DTo4DVec(objects[id].tri_v[i]);
-        buffer = Multiply(n_translation, buffer);
-        buffer = Multiply(rotation, buffer);
-        buffer = Multiply(translation, buffer);
-        buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].tri_v[i] = buf;
+        cameraPos = buf;
     }
 }
 
@@ -259,23 +285,32 @@ void Render3D::RotateZ(int id, float rad, Point3D &origin){
                                {0,0,1,-origin.z},
                                {0,0,0,1}};
 
-    for (int i = 0; i < objects[id].vertices.size(); i++){
-        buffer = P3DTo4DVec(objects[id].vertices[i]);
+    if (id > -1){
+        for (int i = 0; i < objects[id].vertices.size(); i++){
+            buffer = P3DTo4DVec(objects[id].vertices[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].vertices[i] = buf;
+        }
+
+
+        for (int i = 0; i < objects[id].tri_v.size(); i++){
+            buffer = P3DTo4DVec(objects[id].tri_v[i]);
+            buffer = Multiply(n_translation, buffer);
+            buffer = Multiply(rotation, buffer);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].tri_v[i] = buf;
+        }
+    } else if (id < 0){
+        buffer = P3DTo4DVec(cameraPos);
         buffer = Multiply(n_translation, buffer);
         buffer = Multiply(rotation, buffer);
         buffer = Multiply(translation, buffer);
         buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].vertices[i] = buf;
-    }
-
-
-    for (int i = 0; i < objects[id].tri_v.size(); i++){
-        buffer = P3DTo4DVec(objects[id].tri_v[i]);
-        buffer = Multiply(n_translation, buffer);
-        buffer = Multiply(rotation, buffer);
-        buffer = Multiply(translation, buffer);
-        buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].tri_v[i] = buf;
+        cameraPos = buf;
     }
 }
 
@@ -294,18 +329,25 @@ void Render3D::Translate(int id, std::vector<float> &tr_vec){
     Point3D buf;
     std::vector<float> buffer;
 
-    for (int i = 0; i < objects[id].vertices.size(); i++){
-        buffer = P3DTo4DVec(objects[id].vertices[i]);
-        buffer = Multiply(translation, buffer);
-        buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].vertices[i] = buf;
-    }
+    if (id > -1){
+        for (int i = 0; i < objects[id].vertices.size(); i++){
+            buffer = P3DTo4DVec(objects[id].vertices[i]);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].vertices[i] = buf;
+        }
 
-    for (int i = 0; i < objects[id].tri_v.size(); i++){
-        buffer = P3DTo4DVec(objects[id].tri_v[i]);
+        for (int i = 0; i < objects[id].tri_v.size(); i++){
+            buffer = P3DTo4DVec(objects[id].tri_v[i]);
+            buffer = Multiply(translation, buffer);
+            buf = {buffer[0], buffer[1], buffer[2]};
+            objects[id].tri_v[i] = buf;
+        }
+    } else if (id < 0){
+        buffer = P3DTo4DVec(cameraPos);
         buffer = Multiply(translation, buffer);
         buf = {buffer[0], buffer[1], buffer[2]};
-        objects[id].tri_v[i] = buf;
+        cameraPos = buf;
     }
 }
 

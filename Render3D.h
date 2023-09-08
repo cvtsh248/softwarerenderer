@@ -25,7 +25,7 @@ class Render3D{
     public:
         std::vector<Object3D> objects;
 
-        std::vector<float> cameraPos;
+        Point3D cameraPos;
         float fov; 
         float aspectRatio;
         float top;
@@ -39,7 +39,7 @@ class Render3D{
         Matrix_44 rotation;
         Matrix_44 translation;
 
-        Render3D(float &width, float &height, float &near, float &far, float &fov, std::vector<Object3D> &obj);
+        Render3D(float &width, float &height, float &near, float &far, float &fov, Point3D &cpos, std::vector<Object3D> &obj);
 
         void RenderVert(SDL_Window *window, SDL_Renderer *renderer);
 
