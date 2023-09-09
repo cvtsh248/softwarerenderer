@@ -7,6 +7,8 @@ Object3D loadObj(std::string filename){
     std::ifstream objfile;
     objfile.open(filename);
 
+    std::printf("Loading ");
+    std::printf("%s\n",filename.c_str());
     if (objfile.is_open()){
         std::string buffer;
         std::vector<std::string> buf;
@@ -35,19 +37,6 @@ Object3D loadObj(std::string filename){
                 }
                 Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
             }
-            // else if (buffer[0] == *"f" && buffer[letter_slash] == '/'){
-            //     std::vector<float> pointBuffer;
-            //     while (std::getline(ss, s, '/')) {
-            //         if (i == 1){
-            //             //pointBuffer.push_back(std::stof(s));
-            //             pointBuffer = {};
-            //             std::stringstream ss_(s);
-            //             std::string s_;
-            //         }
-            //         i++;
-            //     }
-            //     Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
-            // }
             else if (buffer[0] == *"f" && buffer[letter_slash] == '/'){
                 std::vector<float> pointBuffer;
                 while (std::getline(ss, s, ' ')) {
@@ -67,6 +56,16 @@ Object3D loadObj(std::string filename){
                     i++;
                 }
                 Out.tris.push_back(Point3D{pointBuffer[0], pointBuffer[1], pointBuffer[2]});
+            }
+            else if(buffer[0] == *"v" && buffer[1] == *"n"){
+                std::vector<float> pointBuffer;
+                while (std::getline(ss, s, ' ')) {
+                    if (i > 0){
+                        pointBuffer.push_back(std::stoi(s));
+                    }
+                    i++;
+                }
+                Out.normals.push_back(pointBuffer);
             }
         }
     }
@@ -164,26 +163,37 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
             //projected = {{0,0,0,0},{0,0,0,0},{0,0,0,0}};
             //pxy = {{0,0},{0,0},{0,0}};
             buffer = {objects[i].tri_v[j], objects[i].tri_v[j+1],objects[i].tri_v[j+2]};
-            for (int n = 0; n < 3; n++){
-                buffer_ = P3DTo4DVec(buffer[n]);
-                translation = {{1,0,0,-cameraPos.x},
-                            {0,1,0,-cameraPos.y},
-                            {0,0,1,-cameraPos.z},
-                            {0,0,0,1}};
-                projected[n] = Multiply(translation, buffer_);
-                projected[n] = Multiply(projection, projected[n]);
-                if (projected[n][3] != 0 && projected[n][3] != 1){
-                    pxy[n][0] = std::round(((projected[n][0]/projected[n][3] + 1)*0.5*imgw));
-                    pxy[n][1] = std::round(((1-(projected[n][1]/projected[n][3] + 1)*0.5)*imgh)); 
-                } else {
-                    pxy[n][0] = std::round(((projected[n][0]+ 1)*imgw*0.5)); 
-                    pxy[n][1] = std::round(((1-(projected[n][1]+1))*0.5*imgh));
-                }
+            std::vector<float> vecA = {buffer[0].x-buffer[1].x, buffer[0].y-buffer[1].y, buffer[0].z-buffer[1].z};
+            std::vector<float> vecB = {buffer[0].x-buffer[2].x, buffer[0].y-buffer[2].y, buffer[0].z-buffer[2].z};
+            vecA = Normalise(vecA);
+            vecB = Normalise(vecB);
+            std::vector<float> crs = Cross(vecA, vecB);
+            std::vector<float> camN = {buffer[0].x - cameraPos.x, buffer[0].y - cameraPos.y, buffer[0].z - cameraPos.z};
+            camN = Normalise(camN);
+            crs = Normalise(crs);
+            float dt = Dot(crs, camN);
+            if (-dt >= 0){
+                for (int n = 0; n < 3; n++){
+                        buffer_ = P3DTo4DVec(buffer[n]);
+                        translation = {{1,0,0,-cameraPos.x},
+                                    {0,1,0,-cameraPos.y},
+                                    {0,0,1,-cameraPos.z},
+                                    {0,0,0,1}};
+                        projected[n] = Multiply(translation, buffer_);
+                        projected[n] = Multiply(projection, projected[n]);
+                        if (projected[n][3] != 0 && projected[n][3] != 1){
+                            pxy[n][0] = std::round(((projected[n][0]/projected[n][3] + 1)*0.5*imgw));
+                            pxy[n][1] = std::round(((1-(projected[n][1]/projected[n][3] + 1)*0.5)*imgh)); 
+                        } else {
+                            pxy[n][0] = std::round(((projected[n][0]+ 1)*imgw*0.5)); 
+                            pxy[n][1] = std::round(((1-(projected[n][1]+1))*0.5*imgh));
+                        }
+                    }
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
+                SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
+                SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
             }
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
-            SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
-            SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
         }
 
     }

@@ -17,7 +17,8 @@ int main(){
     // Object3D Cube = {std::vector<Point3D> {Point3D{0,0,0},Point3D{1,0,0},Point3D{1,1,0},Point3D{0,1,0},Point3D{0,0,1},Point3D{1,0,1},Point3D{1,1,1},Point3D{0,1,1}},{},{}};
     Object3D Teapot = loadObj("teapot.obj");
     Object3D Cube = loadObj("cube.obj");
-    std::vector<Object3D> objects = {Teapot};
+    Object3D Thingy = loadObj("weird.obj");
+    std::vector<Object3D> objects = {Thingy};
     SDL_Window* window = SDL_CreateWindow("3D Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Init(SDL_INIT_VIDEO);
@@ -42,10 +43,11 @@ int main(){
     while(!quit){
         SDL_Event event;
         //SDL_Delay(100);
+        R1.RotateX(0, 0.01, neworig);
         R1.RotateY(0, 0.01, neworig);
-        //R1.RotateZ(1, 0.1, neworige);
+        R1.RotateZ(0, 0.01, neworig);
 
-        //R1.Translate(-1,tr1);
+        // R1.Translate(-1,tr1);
         
         //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         //SDL_RenderClear(renderer);

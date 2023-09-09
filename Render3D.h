@@ -17,6 +17,7 @@ struct Object3D{
     std::vector<Point3D> vertices;
     std::vector<Point3D> tris;
     std::vector<Point3D> tri_v;
+    std::vector<std::vector<float>> normals;
 };
 
 Object3D loadObj(std::string filename);
@@ -24,7 +25,8 @@ Object3D loadObj(std::string filename);
 class Render3D{
     public:
         std::vector<Object3D> objects;
-
+        
+        std::vector<float> camNormal = {0,0,-1};
         Point3D cameraPos;
         float FPS;
         float fov; 
