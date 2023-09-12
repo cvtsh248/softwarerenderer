@@ -152,6 +152,7 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
     int px, py;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    float zbuffer = 0;
     // Project the vertices
     for (int i = 0; i < objects.size(); i++){
         buffer = {};
@@ -169,6 +170,9 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
             vecB = Normalise(vecB);
             std::vector<float> crs = Cross(vecA, vecB);
             std::vector<float> camN = {buffer[0].x - cameraPos.x, buffer[0].y - cameraPos.y, buffer[0].z - cameraPos.z};
+            std::vector<std::vector<int>> a;
+            std::vector<std::vector<int>> b;
+            std::vector<std::vector<int>> c;
             camN = Normalise(camN);
             crs = Normalise(crs);
             float dt = Dot(crs, camN);
@@ -189,6 +193,49 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
                             pxy[n][1] = std::round(((1-(projected[n][1]+1))*0.5*imgh));
                         }
                     }
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
+                SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
+                SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
+
+                // std::vector<std::vector<int>> a = lerpBilinear(pxy[0],pxy[2]);
+                // std::vector<std::vector<int>> b = lerpBilinear(pxy[1],pxy[2]);
+
+                // if (b.size() > a.size()){
+                //     for (int i = 0; i < a.size(); i++){
+                //         SDL_RenderDrawLine(renderer, a[i][0], a[i][1], b[i][0], b[i][1]);
+                //     }
+                //     for (int i = a.size()-1; i < b.size(); i++){
+                //         SDL_RenderDrawLine(renderer, a[a.size()-1][0], a[a.size()-1][1], b[i][0], b[i][1]);
+                //     }
+                // } else if (b.size() < a.size()){
+                //     for (int i = 0; i < b.size(); i++){
+                //         SDL_RenderDrawLine(renderer, a[i][0], a[i][1], b[i][0], b[i][1]);
+                //     }
+                //     for (int i = b.size()-1; i < a.size(); i++){
+                //         SDL_RenderDrawLine(renderer, a[i][0], a[i][1], b[b.size()-1][0], b[b.size()-1][1]);
+                //     }
+                // }
+                SDL_Vertex triangleVertex[3]=
+                    {
+                        {
+                            { (float)pxy[0][0],(float)pxy[0][1]}, /* first point location */ 
+                            { 255, 0, 0, 0xFF }, /* first color */ 
+                            { 0.f, 0.f }
+                        },
+                        {
+                            { (float)pxy[1][0], (float)pxy[1][1] }, /* second point location */ 
+                            { 0,255,0, 0xFF }, /* second color */
+                            { 0.f, 0.f }
+                        },
+                        {
+                            { (float)pxy[2][0], (float)pxy[2][1] }, /* third point location */ 
+                            { 0,0,255, 0xFF }, /* third color */
+                            { 0.f, 0.f }
+                        }
+                    };
+                SDL_RenderGeometry(renderer, NULL, triangleVertex, 3, NULL, 0);
+                
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                 SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
                 SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
@@ -383,5 +430,3 @@ void Render3D::Translate(int id, std::vector<float> &tr_vec){
         cameraPos = buf;
     }
 }
-
-

@@ -30,3 +30,40 @@ std::vector<float> AddVec(std::vector<float> &a, std::vector<float> &b){
 std::vector<float> P3DTo4DVec(struct Point3D &a){
     return std::vector<float> {a.x, a.y, a.z, 1};
 }
+
+std::vector<int> lerpInt(int &a, int &b){
+    std::vector<int> buffer;
+    // float a = (float)a_;
+    // float b = (float)b_;
+    for (float i = 0; i < b-a+1; i++){
+        //buffer.push_back((int)(a*((b-a-i)/(b-a))+(b*i)/(b-a)));
+        buffer.push_back((int)(a+i));
+    }
+    return buffer;
+}
+
+std::vector<std::vector<int>> lerpBilinear(std::vector<int> &a, std::vector<int> &b){
+    std::vector<std::vector<int>> buffer;
+    float gradient = ((float)(b[1]-a[1])/(float)(b[0]-a[0]));
+    float constant = (float)a[1]-(float)a[0]*(gradient);
+
+    float x = (float)a[0];
+
+    if ((b[0]-a[0]) > 0){
+        while (x != b[0]){
+            float y = gradient*x + constant;
+            std::vector<int> buf {(int)x,(int)y};
+            buffer.push_back(buf);
+            x++;
+        }
+    } else if ((b[0]-a[0]) < 0) {
+        while (x != b[0]){
+            float y = gradient*x + constant;
+            std::vector<int> buf {(int)std::round(x),(int)std::round(y)};
+            buffer.push_back(buf);
+            x--;
+        }
+    }
+
+    return buffer;
+}

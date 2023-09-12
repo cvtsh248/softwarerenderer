@@ -36,4 +36,8 @@ std::vector<float> AddVec(std::vector<float> &a, std::vector<float> &b);
 
 float Dot(std::vector<float> &a, std::vector<float> &b);
 
+std::vector<int> lerpPx(int &a, int &b);
+
+std::vector<std::vector<int>> lerpBilinear(std::vector<int> &a, std::vector<int> &b);
+
 #endif
