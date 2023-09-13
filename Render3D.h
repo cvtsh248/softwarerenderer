@@ -8,6 +8,8 @@
 #include <fstream>
 #include <string>
 #include <sstream> 
+#include <map>
+#include <algorithm>
 #include "graphicsmath.h"
 
 #ifndef RENDER3D_H
@@ -18,6 +20,7 @@ struct Object3D{
     std::vector<Point3D> tris;
     std::vector<Point3D> tri_v;
     std::vector<std::vector<float>> normals;
+    std::vector<float> camdist;
 };
 
 Object3D loadObj(std::string filename);

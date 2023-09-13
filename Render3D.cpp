@@ -149,7 +149,8 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
     std::vector<std::vector<int>> pxy;
     std::vector<Point3D> buffer;
     std::vector<float> buffer_;
-    int px, py;
+
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     float zbuffer = 0;
@@ -159,6 +160,18 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
         buffer_ = {};
         projected = {{0,0,0,0},{0,0,0,0},{0,0,0,0}};
         pxy = {{0,0},{0,0},{0,0}};
+        //Sort vertices first
+        objects[i].camdist = {};
+        for (int j = 0; j < objects[i].tri_v.size(); j+=3){
+            float centroidX = (objects[i].tri_v[j].x + objects[i].tri_v[j+1].x + objects[i].tri_v[j+2].x)/3;
+            float centroidY = (objects[i].tri_v[j].y + objects[i].tri_v[j+1].y + objects[i].tri_v[j+2].y)/3;
+            float centroidZ = (objects[i].tri_v[j].z + objects[i].tri_v[j+1].z + objects[i].tri_v[j+2].z)/3;
+            objects[i].camdist.push_back(std::sqrt(centroidX*centroidX + centroidY*centroidY + centroidZ+centroidZ));
+        }
+
+        //std::sort(objects[i].tri_v);
+        //(std::sqrt((objects[i].tri_v[j].x)*(objects[i].tri_v[j].x)+(objects[i].tri_v[j].y)*(objects[i].tri_v[j].y)+(objects[i].tri_v[j].z)*(objects[i].tri_v[j].z)));
+
         for (int j = 0; j < objects[i].tri_v.size(); j+=3){
             //buffer = P3DTo4DVec(objects[i].vertices[j]);
             //projected = {{0,0,0,0},{0,0,0,0},{0,0,0,0}};
@@ -193,10 +206,10 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
                             pxy[n][1] = std::round(((1-(projected[n][1]+1))*0.5*imgh));
                         }
                     }
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
-                SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
-                SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
+                // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                // SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
+                // SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
+                // SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
 
                 // std::vector<std::vector<int>> a = lerpBilinear(pxy[0],pxy[2]);
                 // std::vector<std::vector<int>> b = lerpBilinear(pxy[1],pxy[2]);
@@ -235,11 +248,11 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
                         }
                     };
                 SDL_RenderGeometry(renderer, NULL, triangleVertex, 3, NULL, 0);
-                
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
-                SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
-                SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
+
+                // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                // SDL_RenderDrawLine(renderer, pxy[0][0],pxy[0][1],pxy[1][0],pxy[1][1]);
+                // SDL_RenderDrawLine(renderer, pxy[1][0],pxy[1][1],pxy[2][0],pxy[2][1]);
+                // SDL_RenderDrawLine(renderer, pxy[2][0],pxy[2][1],pxy[0][0],pxy[0][1]);
             }
         }
 
@@ -404,7 +417,6 @@ void Render3D::Translate(int id, std::vector<float> &tr_vec){
                    {0,1,0,tr_vec[1]},
                    {0,0,1,tr_vec[2]},
                    {0,0,0,1}};
-
 
     Point3D buf;
     std::vector<float> buffer;
