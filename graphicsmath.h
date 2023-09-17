@@ -40,4 +40,7 @@ std::vector<int> lerpPx(int &a, int &b);
 
 std::vector<std::vector<int>> lerpBilinear(std::vector<int> &a, std::vector<int> &b);
 
+std::vector<Point3D> sortTris(std::vector<Point3D> &triv, std::vector<double> &dist);
+
+
 #endif

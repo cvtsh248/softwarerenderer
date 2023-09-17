@@ -67,3 +67,37 @@ std::vector<std::vector<int>> lerpBilinear(std::vector<int> &a, std::vector<int>
 
     return buffer;
 }
+
+bool compare_pair( const std::pair<float,std::vector<Point3D>> &pair1, 
+                   const std::pair<float,std::vector<Point3D>> &pair2)
+{
+    if( pair1.first > pair2.first)
+    {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+std::vector<Point3D> sortTris(std::vector<Point3D> &triv, std::vector<double> &dist){
+    std::vector<Point3D> output(triv.size());
+    std::pair<double, std::vector<Point3D>> distPair[dist.size()];
+    for (int i = 0; i < triv.size(); i+=3){
+        std::vector<Point3D> buffer = {triv[i], triv[i+1], triv[i+2]};
+        distPair[i/3].first = dist[i];
+        distPair[i/3].second = buffer;
+        //printf("%d\n", i/3);
+    }
+    // Sort pair
+
+    size_t length = sizeof(distPair)/sizeof(distPair[0]);
+    std::sort(distPair, distPair+length, compare_pair);
+    for (int i = 0; i < triv.size(); i+=3){
+        output[i] = distPair[i/3].second[0];
+        output[i+1] = distPair[i/3].second[1];
+        output[i+2] = distPair[i/3].second[2];
+    }
+
+    return output;
+
+}

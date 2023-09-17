@@ -161,13 +161,17 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
         projected = {{0,0,0,0},{0,0,0,0},{0,0,0,0}};
         pxy = {{0,0},{0,0},{0,0}};
         //Sort vertices first
-        objects[i].camdist = {};
+        //objects[i].camdist = {};
+        std::vector<double> camDist;
         for (int j = 0; j < objects[i].tri_v.size(); j+=3){
-            float centroidX = (objects[i].tri_v[j].x + objects[i].tri_v[j+1].x + objects[i].tri_v[j+2].x)/3;
-            float centroidY = (objects[i].tri_v[j].y + objects[i].tri_v[j+1].y + objects[i].tri_v[j+2].y)/3;
-            float centroidZ = (objects[i].tri_v[j].z + objects[i].tri_v[j+1].z + objects[i].tri_v[j+2].z)/3;
-            objects[i].camdist.push_back(std::sqrt(centroidX*centroidX + centroidY*centroidY + centroidZ+centroidZ));
+            double centroidX = (objects[i].tri_v[j].x + objects[i].tri_v[j+1].x + objects[i].tri_v[j+2].x)/3;
+            double centroidY = (objects[i].tri_v[j].y + objects[i].tri_v[j+1].y + objects[i].tri_v[j+2].y)/3;
+            double centroidZ = (objects[i].tri_v[j].z + objects[i].tri_v[j+1].z + objects[i].tri_v[j+2].z)/3;
+            camDist.push_back(std::sqrt((centroidX-cameraPos.x)*(centroidX-cameraPos.x) + (centroidY-cameraPos.y)*(centroidY-cameraPos.y) + (centroidZ-cameraPos.z)*(centroidZ-cameraPos.z)));
         }
+
+        objects[i].tri_v = sortTris(objects[i].tri_v, camDist);
+        //inpSortTris(objects[i].tri_v, camDist);
 
         //std::sort(objects[i].tri_v);
         //(std::sqrt((objects[i].tri_v[j].x)*(objects[i].tri_v[j].x)+(objects[i].tri_v[j].y)*(objects[i].tri_v[j].y)+(objects[i].tri_v[j].z)*(objects[i].tri_v[j].z)));
