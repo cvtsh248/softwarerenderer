@@ -79,18 +79,17 @@ bool compare_pair( const std::pair<float,std::vector<Point3D>> &pair1,
     }
 }
 
-std::vector<Point3D> sortTris(std::vector<Point3D> &triv, std::vector<double> &dist){
+std::vector<Point3D> sortTris(std::vector<Point3D> &triv, std::vector<float> &dist){
     std::vector<Point3D> output(triv.size());
-    std::pair<double, std::vector<Point3D>> distPair[dist.size()];
+    std::pair<float, std::vector<Point3D>> distPair[dist.size()];
     for (int i = 0; i < triv.size(); i+=3){
         std::vector<Point3D> buffer = {triv[i], triv[i+1], triv[i+2]};
-        distPair[i/3].first = dist[i];
+        distPair[i/3].first = dist[i/3];
         distPair[i/3].second = buffer;
-        //printf("%d\n", i/3);
     }
-    // Sort pair
-
+    //sort pair
     size_t length = sizeof(distPair)/sizeof(distPair[0]);
+
     std::sort(distPair, distPair+length, compare_pair);
     for (int i = 0; i < triv.size(); i+=3){
         output[i] = distPair[i/3].second[0];

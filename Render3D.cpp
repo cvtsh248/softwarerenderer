@@ -162,12 +162,13 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
         pxy = {{0,0},{0,0},{0,0}};
         //Sort vertices first
         //objects[i].camdist = {};
-        std::vector<double> camDist;
+        std::vector<float> camDist;
         for (int j = 0; j < objects[i].tri_v.size(); j+=3){
-            double centroidX = (objects[i].tri_v[j].x + objects[i].tri_v[j+1].x + objects[i].tri_v[j+2].x)/3;
-            double centroidY = (objects[i].tri_v[j].y + objects[i].tri_v[j+1].y + objects[i].tri_v[j+2].y)/3;
-            double centroidZ = (objects[i].tri_v[j].z + objects[i].tri_v[j+1].z + objects[i].tri_v[j+2].z)/3;
-            camDist.push_back(std::sqrt((centroidX-cameraPos.x)*(centroidX-cameraPos.x) + (centroidY-cameraPos.y)*(centroidY-cameraPos.y) + (centroidZ-cameraPos.z)*(centroidZ-cameraPos.z)));
+            float centroidX = (objects[i].tri_v[j].x + objects[i].tri_v[j+1].x + objects[i].tri_v[j+2].x)/3;
+            float centroidY = (objects[i].tri_v[j].y + objects[i].tri_v[j+1].y + objects[i].tri_v[j+2].y)/3;
+            float centroidZ = (objects[i].tri_v[j].z + objects[i].tri_v[j+1].z + objects[i].tri_v[j+2].z)/3;
+            camDist.push_back((centroidX-cameraPos.x)*(centroidX-cameraPos.x) + (centroidY-cameraPos.y)*(centroidY-cameraPos.y) + (centroidZ-cameraPos.z)*(centroidZ-cameraPos.z));
+            //printf("%f\n", (centroidX-cameraPos.x)*(centroidX-cameraPos.x) + (centroidY-cameraPos.y)*(centroidY-cameraPos.y) + (centroidZ-cameraPos.z)*(centroidZ-cameraPos.z));
         }
 
         objects[i].tri_v = sortTris(objects[i].tri_v, camDist);
