@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 #ifndef GRAPHICSMATH_H
 #define GRAPHICSMATH_H
