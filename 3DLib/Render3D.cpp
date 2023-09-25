@@ -3,6 +3,10 @@
 // Methods
 
 Object3D loadObj(std::string filename){
+
+    std::string mtl = filename+".mtl";
+    filename = filename+".obj";
+
     Object3D Out;
     std::ifstream objfile;
     objfile.open(filename);
@@ -50,7 +54,6 @@ Object3D loadObj(std::string filename){
                                 pointBuffer.push_back(std::stoi(s_));
                             }
                             n++;
-                            //std::printf("%d\n", std::stoi(s_));
                         }
                     }
                     i++;
@@ -80,6 +83,27 @@ Object3D loadObj(std::string filename){
 
     }
 
+    std::ifstream objfile_;
+    objfile_.open(mtl);
+    if (objfile_.is_open()){
+        std::string buffer;
+        std::vector<std::string> buf;
+        while (std::getline(objfile_, buffer)){
+            std::stringstream ss(buffer);
+            std::string s;
+            int i = 0;
+            if (buffer[0] == *"K" && buffer[1] == *"d"){ // Appending diffuse colour
+                std::vector<float> pointBuffer;
+                while (std::getline(ss, s, ' ')) {
+                    if (i > 0){
+                        pointBuffer.push_back(std::stof(s));
+                    }
+                    i++;
+                }
+                Out.DifCol = pointBuffer;
+            }
+        }
+    }
     return Out;
 
 }
@@ -109,7 +133,6 @@ Render3D::Render3D(float &fps, float &width, float &height, float &near, float &
 }
 
 void Render3D::RenderVert(SDL_Window *window, SDL_Renderer *renderer){
-    //std::printf("egg");
     std::vector<float> buffer;
     std::vector<float> projected;
     int px, py;
@@ -131,9 +154,6 @@ void Render3D::RenderVert(SDL_Window *window, SDL_Renderer *renderer){
             }
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderDrawPoint(renderer, px, py);
-            // std::printf("%d ",j);
-            // std::printf("%d ",px);
-            // std::printf("%d\n",py);
         }
 
     }
@@ -204,22 +224,31 @@ void Render3D::RenderTris(SDL_Window *window, SDL_Renderer *renderer){
                             pxy[n][1] = std::round(((1-(projected[n][1]+1))*0.5*imgh));
                         }
                     }
+                std::vector<float> col;
+                if (objects[i].DifCol.size() > 0){
+                    col = objects[i].DifCol;
+                } else {
+                    col = {1,1,1};
+                }
                 Uint8 shade = (Uint8)(std::abs(dl*255));
+                Uint8 shadeR = (Uint8)((std::abs(dl*255))*col[0]);
+                Uint8 shadeG = (Uint8)((std::abs(dl*255))*col[1]);
+                Uint8 shadeB = (Uint8)((std::abs(dl*255))*col[2]);
                 SDL_Vertex triangleVertex[3]=
                     {
                         {
                             { (float)pxy[0][0],(float)pxy[0][1]}, /* first point location */ 
-                            { shade, shade, shade, 0xFF }, /* first color */ 
+                            { shadeR, shadeG, shadeB, 0xFF }, /* first color */ 
                             { 0.f, 0.f }
                         },
                         {
                             { (float)pxy[1][0], (float)pxy[1][1] }, /* second point location */ 
-                            {shade, shade, shade, 0xFF }, /* second color */
+                            {shadeR, shadeG, shadeB, 0xFF }, /* second color */
                             { 0.f, 0.f }
                         },
                         {
                             { (float)pxy[2][0], (float)pxy[2][1] }, /* third point location */ 
-                            { shade, shade, shade, 0xFF }, /* third color */
+                            { shadeR, shadeG, shadeB, 0xFF }, /* third color */
                             { 0.f, 0.f }
                         }
                     };

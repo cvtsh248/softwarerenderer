@@ -21,6 +21,7 @@ struct Object3D{
     std::vector<Point3D> tri_v;
     std::vector<std::vector<float>> normals;
     std::vector<float> camdist;
+    std::vector<float> DifCol;
 };
 
 Object3D loadObj(std::string filename);
