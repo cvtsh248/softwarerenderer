@@ -19,7 +19,7 @@ int main(){
     Object3D Cube = loadObj("Mesh/cube");
     Object3D Thingy = loadObj("Mesh/weird");
     Object3D Monkey = loadObj("Mesh/monkey");
-    std::vector<Object3D> objects = {Cube};
+    std::vector<Object3D> objects = {Teapot};
     SDL_Window* window = SDL_CreateWindow("3D Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Init(SDL_INIT_VIDEO);
@@ -47,15 +47,8 @@ int main(){
         R1.RotateX(0, 0.01, neworig);
         R1.RotateY(0, 0.01, neworig);
         R1.RotateZ(0, 0.01, neworig);
-
-        //R1.Translate(-1,tr1);
-        
-        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        //SDL_RenderClear(renderer);
-        // R1.RenderVert(window, renderer);
         R1.RenderTris(window, renderer);
-        //SDL_RenderPresent(renderer);  
-        //SDL_RenderPresent(renderer);  
+
         while (SDL_PollEvent(&event)) {
             //SDL_Delay(1000);
             if (event.type == SDL_QUIT) {
